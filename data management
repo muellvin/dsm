@@ -1,0 +1,11 @@
+NODES
+saving nodes as numpy arrays with 2 axis (dimensions)
+first axis represents the nodes
+second axis list the attributes of each node
+
+dx, dy, dphiz, fx, fy, mz
+displacements dx and dy, rotation of the node dphiz
+and the forces in x and y and moment in z
+
+BEAMS
+the beams are also saved as arrays
