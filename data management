@@ -1,11 +1,38 @@
-NODES
-saving nodes as numpy arrays with 2 axis (dimensions)
-first axis represents the nodes
-second axis list the attributes of each node
+Data will be saved as numpy arrays (dimension = axis)
 
-dx, dy, dphiz, fx, fy, mz
-displacements dx and dy, rotation of the node dphiz
-and the forces in x and y and moment in z
+NODES 
+nodes:		nodes = 	[node number][x, y]
+displacements: 	node_dis = 	[node number][dx, dy, dphiz]
+forces:		node_forces = 	[node number][fx, fy, mz]
+
+
 
 BEAMS
-the beams are also saved as arrays
+beams-nodes:	beam_nodes = 	[beam number][node number i, node number j]
+properties:	beam_prop = 	[beam number][A, I, l, E, rho]
+support:	beam_supp = 	[beam number][bni, bvi, bmi, bnj, bvj, bmj]
+
+where b stands for bool, i,j are the two nodes, and n,v,m the corresponding forces
+
+
+
+FORCES
+ext forces:	f_ext = 	[node number][fx, fy, mz]
+(external forces acting directly on the nodes)
+int forces:	p_int =		[node number][fx, fy, mz]
+(reaction of the nodes to the beams due to weight and maybe internal forces on the beam)
+
+
+
+SYSTEM
+The symmetrical stiffness matrix, the force and displacement vectors can be constructed
+stiffn. matrix:	k_sys =		kn1, kv1, km1, kn2, kv2, km2, ...
+displ. vector:	u_sys = 	...
+The total force vector can be computed by rotation the 
+force. vector:	f_sys = 	f_ext - p_int
+	
+Then the system can be solved for u_sys
+
+
+
+
