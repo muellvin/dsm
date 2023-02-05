@@ -3,14 +3,14 @@ Data will be saved as numpy arrays (dimension = axis)
 NODES 
 nodes:		nodes = 	[node number][x, y]
 displacements: 	node_dis = 	[node number][dx, dy, dphiz]
-forces:		node_forces = 	[node number][fx, fy, mz]
+
 
 
 
 BEAMS
 beams-nodes:	beam_nodes = 	[beam number][node number i, node number j]
 properties:	beam_prop = 	[beam number][A, I, l, E, rho]
-support:	beam_supp = 	[beam number][bni, bvi, bmi, bnj, bvj, bmj]
+support:	beam_supp = 	[beam number][end][bn, bv, bm]
 
 where b stands for bool, i,j are the two nodes, and n,v,m the corresponding forces
 
