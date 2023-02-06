@@ -80,13 +80,25 @@ def build_k_sys(beam_nodes, beam_k_glob, nodes_supp):
 
     return k_sys
 
-def get_k_ff(k_sys, nodes_supp):
+def get_free_nodes(nodes_supp):
     frees = np.array()
     for i in range(len(nodes_supp)):
         for j in range(0,3):
             if nodes_supp[i][j] == 0:
-                np.append(frees, 3*i+j)
+                frees = np.append(frees, 3*i+j, axis=0)
+    return frees
 
+def get_fixed_nodes(nodes_supp):
+    fixed = np.array()
+    for i in range(len(nodes_supp)):
+        for j in range(0,3):
+            if nodes_supp[i][j] == 1:
+                fixed = np.append(fixed, 3*i+j, axis=0)
+    return fixed
+
+def get_k_ff(k_sys, nodes_supp):
+
+    frees = get_free_nodes(nodes_supp)
     k_ff = np.array((len(frees), len(frees)))
 
     counter_d = 0
@@ -96,9 +108,35 @@ def get_k_ff(k_sys, nodes_supp):
             k_ff[counter_d][counter_o] = k_sys[d][o]
             counter_o +=1
         counter_d += 1
+
     return k_ff
 
 
-
 def get_k_sf(k_sys, nodes_supp):
-    length = 0
+    frees = get_free_nodes(nodes_supp)
+    fixed = get_fixed_nodes(nodes_supp)
+
+    k_sf = np.array((len(fixeds), len(frees)))
+
+    counter_d = 0
+    for d in np.nditer(fixeds):
+        counter_o = 0
+        for o in np.nditer(frees):
+            k_sf[counter_d][counter_o] = k_sys[d][o]
+            counter_o +=1
+        counter_d += 1
+
+    return k_sf
+
+def get_f_ext_f(f_ext, nodes_supp):
+    frees = get_free_nodes(nodes_supp)
+    f_ext_f = np.array(len(frees))
+
+    counter = 0
+    for i in np.nditer(frees):
+        f_ext_f[counter] = f_ext[i]
+        counter += 1
+    return f_ext_f
+
+def solve_for_u_f(k_ff, f_ext_f):
+    return np.matmul(np.linalg.inv(k_ff), f_ext_f)
