@@ -1,6 +1,7 @@
 import numpy as np
 
 nodes = np.array([[0,0], [1,0], [2,0]])
+node_supp = np.array([[1,1,1],[0,0,0],[1,1,1]])
 
 node_disp = np.array([0,0,0, 0,0,0, 0,0,0])
 f_ext = np.array([0,0,0, 0,-1,0, 0,0,0])
@@ -8,7 +9,7 @@ f_ext = np.array([0,0,0, 0,-1,0, 0,0,0])
 
 beam_nodes = np.array([[0,1],[1,2]])
 beam_supp = np.array([[1, 1, 1, 1, 1, 0],[1, 1, 0, 1, 1, 1]])
-beam_prop = np.array([[A, E , I, L],[]])
+beam_prop = np.array([[A, E, I, L],[""]])
 
 #building the stiffness matrixes of each beam
 beam_k_loc = np.array((len(beam_nodes), 6, 6))
