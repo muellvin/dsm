@@ -7,6 +7,7 @@ import numpy as np
 
 example_choice = int(input("Woud you like to use a standart example?: 0-2 are basic, 3-4 are usefull, 5 is free user input"))
 
+
 #the first 4 are hard coded examples
 if(example_choice==0):
     print("This is the basic example, one beam fixed on both ends")
@@ -19,7 +20,7 @@ if(example_choice==0):
 
     beam_nodes = np.array([[0,1]])
     beam_supp = np.array([[1, 1, 1, 1, 1, 1]])
-    beam_prop = np.array([[1, 1, 1, 1,0]])
+    beam_prop = np.array([[1, 1, 1, 1, 0]])
 
 elif(example_choice==1):
     print("This basic example is fixed on the first side and free on the second")
@@ -70,7 +71,7 @@ elif(example_choice==4):
 
     beam_nodes = np.array([[0,1],[0,2],[0,3],[0,4]])
     beam_supp = np.array([[1, 1, 0, 1, 1, 1],[1, 1, 0, 1, 1, 1],[1, 1, 0, 1, 1, 1],[1, 1, 0, 1, 1, 1]])
-    beam_prop = np.array([[1, 1, 1, 1,0],[1, 1, 1, 1,0],[1, 1, 1, 1, np.pi()*-0.5],[1, 1, 1, 1, np.pi()*-0.5]])
+    beam_prop = np.array([[1, 1, 1, 1,0],[1, 1, 1, 1,0],[1, 1, 1, 1, -0.5*np.pi],[1, 1, 1, 1, -0.5*np.pi]])
 
 #this is the user interface
 elif(example_choice==5):
@@ -87,7 +88,7 @@ elif(example_choice==5):
     beam_supp = np.array([[0, 0, 0, 0, 0, 0]])
     beam_prop = np.array([[1, 1, 1, 1,0]])
 
-    
+
     number_of_nodes = int(input("how many nodes do you need?"))
     for i in range(number_of_nodes):
         print("node number: ", i)
@@ -96,6 +97,7 @@ elif(example_choice==5):
         nodes[i][0] = int(input("X Position"))
         nodes[i][1] = int(input("Y Position"))
 
+        print("Please enter how this node is externally supported")
         node_supp = np.append(node_supp,[[1,1,1]], axis=0)
         node_supp[i][0] = bool(input("X direction fixed? 0 if not"))
         node_supp[i][1] = bool(input("Y direction fixed? 0 if not"))
@@ -127,11 +129,11 @@ elif(example_choice==5):
         beam_supp_2_Y = bool(input("support of end node in Y direction"))
         beam_supp_2_T = bool(input("support of end node in Torsion direction"))
 
-        
+
         beam_nodes = np.append(beam_nodes, [[0,0]], axis=0)
         beam_nodes[i][0] = begin_of_beam
         beam_nodes[i][1] = end_of_beam
-        
+
         beam_supp = np.append(beam_supp, [[0,0,0,0,0,0]], axis=0)
         beam_supp[i][0]= beam_supp_1_X
         beam_supp[i][1]= beam_supp_1_Y

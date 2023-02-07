@@ -1,45 +1,50 @@
-import numpy
+import numpy as np
 
 def create_local_stiffness_matrixes(beam_nodes, beam_supp,beam_prop):
-    beam_k_loc = np.array((len(beam_nodes), 6, 6))
+    beam_k_loc = np.zeros((len(beam_nodes), 6, 6), dtype=float)
 
-    for i in range(beam_nodes):
+    for i in range(len(beam_nodes)):
         A = beam_prop[i][0]
         E = beam_prop[i][1]
         I = beam_prop[i][2]
         L = beam_prop[i][3]
 
-        if (beam_supp[i] == [1, 1, 1, 1, 1, 1]):
-            beam_k_loc[i] = E*I/(L**3)*np.array([[A*L**2/I, 0, 0, -A*L**2/I, 0, 0], \
+        #beam clamped on both sides
+        if (beam_supp[i].all() == [1, 1, 1, 1, 1, 1]).all():
+            a = E*I/(L**3)*np.array([[A*L**2/I, 0, 0, -A*L**2/I, 0, 0], \
                                                 [0, 12, 6*L, 0, -12, 6*L], \
                                                 [0, 6*L,4*L**2, 0, -6*L, 2*L**2], \
                                                 [-A*L**2/I, 0, 0, A*L**2/I, 0, 0], \
                                                 [0, -12, -6*L, 0, 12, -6*L], \
-                                                [0, 6*L, 2*L**2, 0, -6*L, 4*L**2]])
-        elif (beam_supp[i] == [1, 1, 1, 1, 1, 0]):
-            beam_k_loc[i] = E*I/(L**3)*np.array([[A*L**2/I, 0, 0, -A*L**2/I, 0, 0], \
+                                                [0, 6*L, 2*L**2, 0, -6*L, 4*L**2]], dtype=float)
+        #beam pinned on both sides
+        elif (beam_supp[i] == [1, 1, 0, 1, 1, 0]).all():
+            a = E*I/(L**3)*np.array([[A*L**2/I, 0, 0, -A*L**2/I, 0, 0], \
                                                 [0, 0, 0, 0, 0, 0], \
                                                 [0, 0, 0, 0, 0, 0], \
                                                 [-A*L**2/I, 0, 0, A*L**2/I, 0, 0], \
                                                 [0, 0, 0, 0, 0, 0], \
-                                                [0, 0, 0, 0, 0, 0]])
-        elif (beam_supp[i] == [1, 1, 0, 1, 1, 1]):
-            beam_k_loc[i] = E*I/(L**3)*np.array([[A*L**2/I, 0, 0, -A*L**2/I, 0, 0], \
+                                                [0, 0, 0, 0, 0, 0]], dtype=float)
+        #beam pinned on the left and clamped on the right
+        elif (beam_supp[i] == [1, 1, 0, 1, 1, 1]).all():
+            a = E*I/(L**3)*np.array([[A*L**2/I, 0, 0, -A*L**2/I, 0, 0], \
                                                 [0, 3, 0, 0, -3, 3*L], \
                                                 [0, 0, 0, 0, 0, 0], \
                                                 [-A*L**2/I, 0, 0, A*L**2/I, 0, 0], \
                                                 [0, -3, 0, 0, 3, -3*L], \
-                                                [0, 3*L, 0, 0, -3*L, 3*L**2]])
-        elif (beam_supp[i] == [1, 1, 1, 1, 1, 0]):
-            beam_k_loc[i] = E*I/(L**3)*np.array([[A*L**2/I, 0, 0, -A*L**2/I, 0, 0], \
+                                                [0, 3*L, 0, 0, -3*L, 3*L**2]], dtype=float)
+        #beam clamped on the left and pinned on the right
+        elif (beam_supp[i] == [1, 1, 1, 1, 1, 0]).all():
+            a = E*I/(L**3)*np.array([[A*L**2/I, 0, 0, -A*L**2/I, 0, 0], \
                                                 [0, 3, 3*L, 0, -3, 0], \
                                                 [0, 3*L, 3*L**2, 0, -3*L, 0], \
                                                 [-A*L**2/I, 0, 0, A*L**2/I, 0, 0], \
                                                 [0, -3, -3*L, 0, 3, 0], \
-                                                [0, 0, 0, 0, 0, 0]])
+                                                [0, 0, 0, 0, 0, 0]], dtype=float)
 
         else:
             assert false, f"beam {i} false support"
+        beam_k_loc[i] = np.array(a, dtype = float)
     return beam_k_loc
 
 def rotate_stiffness_matrices(beam_prop, beam_k_loc):
