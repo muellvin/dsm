@@ -59,6 +59,7 @@ def rotate_stiffness_matrices(beam_prop, beam_k_loc):
                       [0, 0, 0, np.sin(phi), np.cos(phi), 0], \
                       [0, 0, 0, 0, 0, 1]])
         beam_k_glob[i] = np.matmul(np.transpose(R), np.matmul(beam_k_loc[i], R))
+    print("beam_k_glob")
     print(beam_k_glob)
     return beam_k_glob
 
@@ -86,29 +87,34 @@ def build_k_sys(beam_nodes, beam_k_glob, node_supp):
         for i in range(0, 3):
             for j in range(0,3):
                 k_sys[3*node_b+i][3*node_b+j] += beam_k_glob[beam][3+i][3+j]
-
+    print("k_sys")
+    print(k_sys)
     return k_sys
 
 def get_free_nodes(node_supp):
-    frees = np.array()
+    frees = np.array([], dtype=int)
     for i in range(len(node_supp)):
         for j in range(0,3):
             if node_supp[i][j] == 0:
-                frees = np.append(frees, 3*i+j, axis=0)
+                frees = np.append(frees, [int(3*i+j)], axis=0)
+    print("free degrees")
+    print(frees)
     return frees
 
 def get_fixed_nodes(node_supp):
-    fixed = np.array()
+    fixed = np.array([])
     for i in range(len(node_supp)):
         for j in range(0,3):
             if node_supp[i][j] == 1:
-                fixed = np.append(fixed, 3*i+j, axis=0)
+                fixed = np.append(fixed, [int(3*i+j)], axis=0)
+    print("fixed degrees")
+    print(fixed)
     return fixed
 
 def get_k_ff(k_sys, node_supp):
 
     frees = get_free_nodes(node_supp)
-    k_ff = np.array((len(frees), len(frees)))
+    k_ff = np.zeros((len(frees), len(frees)))
 
     counter_d = 0
     for d in np.nditer(frees):
@@ -118,6 +124,8 @@ def get_k_ff(k_sys, node_supp):
             counter_o +=1
         counter_d += 1
 
+    print("k_ff")
+    print(k_ff)
     return k_ff
 
 
@@ -125,7 +133,7 @@ def get_k_sf(k_sys, node_supp):
     frees = get_free_nodes(node_supp)
     fixed = get_fixed_nodes(node_supp)
 
-    k_sf = np.array((len(fixeds), len(frees)))
+    k_sf = np.zeros((len(fixeds), len(frees)))
 
     counter_d = 0
     for d in np.nditer(fixeds):
@@ -135,16 +143,21 @@ def get_k_sf(k_sys, node_supp):
             counter_o +=1
         counter_d += 1
 
+    print("k_sf")
+    print(k_sf)
     return k_sf
 
 def get_f_ext_f(f_ext, node_supp):
     frees = get_free_nodes(node_supp)
-    f_ext_f = np.array(len(frees))
+    f_ext_f = np.zeros((len(frees)))
 
     counter = 0
     for i in np.nditer(frees):
         f_ext_f[counter] = f_ext[i]
         counter += 1
+
+    print("f_ext_f")
+    print(f_ext_f)
     return f_ext_f
 
 def solve_for_u_f(k_ff, f_ext_f):
