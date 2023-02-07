@@ -149,5 +149,18 @@ elif(example_choice==5):
 
         np.append(beam_prop, [[1,1,1,1,0]])
         beam_prop[i]=[1,1,1,1, beam_angle]
+        
+elif(example_choice==6):
+    print("clamped beam at an angle")
+    nodes = np.array([[0,0], [1,1]])
+    node_supp = np.array([[1,1,1],[1,1,1]])
+
+    node_disp = np.array([0,0,0, 0,0,0])
+    f_ext = np.array([0,0,0, 0,-1,0])
+
+
+    beam_nodes = np.array([[0,1]])
+    beam_supp = np.array([[1, 1, 1, 1, 1, 1]])
+    beam_prop = np.array([[1, 1, 1, 1,np.pi/2]])
 else:
     print("Wronge choice, go home")
