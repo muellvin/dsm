@@ -91,6 +91,43 @@ def build_k_sys(beam_nodes, beam_k_glob, node_supp):
     print(k_sys)
     return k_sys
 
+def get_zero_nodes(nodes, beam_nodes, beam_supp):
+    non_zeros = np.array([],dtype=int)
+    zeros = np.array([],dtype=int)
+    node_number = 0
+    #iterate over all node numbers
+    for i in range(len(nodes)):
+        #iterate over all degrees of freedom if this node
+        for deg in range(0,3):
+            zero = True
+            beam_number = 0
+            #iterate over all beams, check whether it is connected to that node
+            #and whether this degree of freedom is connected
+            for beam in beam_nodes:
+                if beam[0] == i:
+                    if beam_supp[beam_number][deg] == 1:
+                        zero = False
+                if beam[1] == i:
+                    if beam_supp[beam_number][3+deg] == 1:
+                        zero = False
+                beam_number+=1
+            #if at leas one beam is connected to this degree of freedom then it is non zero
+            if zero == False:
+                non_zeros = np.append(non_zeros, [int(3*node_number+deg)], axis=0)
+        node_number += 1
+    #iterate over all 3*nodes degrees of freedom, if it is a zero meaning if it is not
+    #in non_zeros then we add it the the list
+    for i in range(3*len(nodes)):
+        zero = True
+        for j in np.nditer(non_zeros):
+            if i == j:
+                zero = False
+        if zero:
+            zeros = np.append(zeros, [i], axis=0)
+
+    return zeros
+
+
 def get_free_nodes(node_supp):
     frees = np.array([], dtype=int)
     for i in range(len(node_supp)):
@@ -111,50 +148,108 @@ def get_fixed_nodes(node_supp):
     print(fixed)
     return fixed
 
-def get_k_ff(k_sys, node_supp):
+#reduces the stiffness matrix k_sys to the part with only the terms
+def get_k_ff(k_sys, node_supp, nodes, beam_nodes, beam_supp):
 
     frees = get_free_nodes(node_supp)
-    k_ff = np.zeros((len(frees), len(frees)))
+    zeros = get_zero_nodes(nodes, beam_nodes, beam_supp)
 
+    size = 0
+    for i in frees:
+        non_zero_free = True
+        for j in zeros:
+            if i == j:
+                non_zero_free = False
+        if non_zero_free == True:
+            size+= 1
+    k_ff = np.zeros((size, size))
+
+    #iterate over all free degrees of freedom
     counter_d = 0
     for d in np.nditer(frees):
-        counter_o = 0
-        for o in np.nditer(frees):
-            k_ff[counter_d][counter_o] = k_sys[d][o]
-            counter_o +=1
-        counter_d += 1
+        #check whether d is a zero degree of freedom
+        d_zero = False
+        for i in np.nditer(zeros):
+            if d == i:
+                d_zero = True
+        #if it is also a non zero
+        if d_zero == False:
+            counter_o = 0
+            for o in np.nditer(frees):
+                o_zero = False
+                for i in np.nditer(zeros):
+                    if o == i:
+                        o_zero = True
+                if o_zero == False:
+                    k_ff[counter_d][counter_o] = k_sys[d][o]
+                    counter_o +=1
+            counter_d += 1
 
     print("k_ff")
     print(k_ff)
     return k_ff
 
 
-def get_k_sf(k_sys, node_supp):
+def get_k_sf(k_sys, node_supp, nodes, beam_nodes, beam_supp):
     frees = get_free_nodes(node_supp)
+    zeros = get_zero_nodes(nodes, beam_nodes, beam_supp)
+
+    size = 0
+    for i in frees:
+        non_zero_free = True
+        for j in zeros:
+            if i == j:
+                non_zero_free = False
+        if non_zero_free == True:
+            size+= 1
+
     fixed = get_fixed_nodes(node_supp)
 
-    k_sf = np.zeros((len(fixeds), len(frees)))
+    k_sf = np.zeros((len(fixeds), size))
 
     counter_d = 0
     for d in np.nditer(fixeds):
         counter_o = 0
         for o in np.nditer(frees):
-            k_sf[counter_d][counter_o] = k_sys[d][o]
-            counter_o +=1
+            #check whether o is a zero degree of freedom
+            o_zero = False
+            for i in np.nditer(zeros):
+                if o == i:
+                    o_zero = True
+            #if it is also a non zero
+            if o_zero == False:
+                k_sf[counter_d][counter_o] = k_sys[d][o]
+                counter_o +=1
         counter_d += 1
 
     print("k_sf")
     print(k_sf)
     return k_sf
 
-def get_f_ext_f(f_ext, node_supp):
+def get_f_ext_f(f_ext, node_supp, nodes, beam_nodes, beam_supp):
     frees = get_free_nodes(node_supp)
-    f_ext_f = np.zeros((len(frees)))
+    zeros = get_zero_nodes(nodes, beam_nodes, beam_supp)
+    size = 0
+    for i in frees:
+        non_zero_free = True
+        for j in zeros:
+            if i == j:
+                non_zero_free = False
+        if non_zero_free == True:
+            size+= 1
+    f_ext_f = np.zeros((size))
 
     counter = 0
     for i in np.nditer(frees):
-        f_ext_f[counter] = f_ext[i]
-        counter += 1
+        #check whether o is a zero degree of freedom
+        i_zero = False
+        for j in np.nditer(zeros):
+            if i == j:
+                i_zero = True
+        #if it is also a non zero
+        if i_zero == False:
+            f_ext_f[counter] = f_ext[i]
+            counter += 1
 
     print("f_ext_f")
     print(f_ext_f)

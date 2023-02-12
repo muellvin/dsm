@@ -9,8 +9,8 @@ print(input.beam_nodes)
 beam_k_loc = s.create_local_stiffness_matrixes(input.beam_nodes, input.beam_supp,input.beam_prop)
 beam_k_glob = s.rotate_stiffness_matrices(input.beam_prop, beam_k_loc)
 k_sys = s.build_k_sys(input.beam_nodes, beam_k_glob, input.node_supp)
-k_ff = s.get_k_ff(k_sys, input.node_supp)
-f_ext_f = s.get_f_ext_f(input.f_ext, input.node_supp)
+k_ff = s.get_k_ff(k_sys, input.node_supp, input.nodes, input.beam_nodes, input.beam_supp)
+f_ext_f = s.get_f_ext_f(input.f_ext, input.node_supp, input.nodes, input.beam_nodes, input.beam_supp)
 
 #tbd!!! if a degree of freedom has no stiffness, it has to be ignored as the matrix otherwise cannot be inverted!!!
 print("solution")
