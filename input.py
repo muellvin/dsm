@@ -106,13 +106,16 @@ elif(example_choice==5):
     node_disp = np.zeros(number_of_nodes)#this will be later used, and filled by the computer
 
     number_of_forces = int(input("how many forces do you really need?"))
+    for i in range(numebr_of_nodes):#create an empty force array
+        f_ext =np.append(f_ext, [0,0,0], axis=0)#the unused third 0 is the moment
+    
     for i in range(number_of_forces):
         print("force numer :", i)
         force_node_number = int(input("on wich node does the force act?"))
         force_x_direction = float(input("X direction, put 0 if not"))
         force_y_direction = float(input("Y direction"))
 
-        f_ext =np.append(f_ext, [0,0,0], axis=0)#the unused third 0 is the moment
+    
         f_ext[force_node_number*3 ]= force_x_direction
         f_ext[force_node_number*3 +1]= force_y_direction#this should be the correct position in the long array
 

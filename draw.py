@@ -16,6 +16,26 @@ def print_beams(beam_nodes, nodes):
 
     plt.axis('scaled')
     plt.show()
+    
+#function that prints the gross cross section
+def print_force(f_ext, number_of_nodes, nodes):#number_of_nodes not necesary, as it is a third of the size of f_ext
+    for i in range(number_of_nodes):
+        if ((f_ext[force_node_number*3] =! 0) or (f_ext[force_node_number*3 + 1] =! 0)):
+        
+            x = []
+            y = []
+            #this is the node on wich the force acts
+            x.append(nodes[i][0])
+            y.append(nodes[i][1])
+
+            #this is the force
+            x.append(f_ext[force_node_number*3 ])
+            y.append(f_ext[force_node_number*3 +1])
+        
+            plt.plot(x, y, 'k')
+
+    plt.axis('scaled')
+    plt.show()
 
 
 def print_support(node_supp, nodes):
