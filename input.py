@@ -35,6 +35,9 @@ elif(example_choice==1):
     beam_supp = np.array([[1, 1, 1, 1, 1, 0]])
     beam_prop = np.array([[1, 1, 1, 1,0]])
 
+    number_of_beams = 1
+    number_of_nodes = 2
+
 elif(example_choice==2):
     print("This basic example is fixed on the second side and free on the first")
     nodes = np.array([[0,0], [1,0]])
@@ -47,7 +50,9 @@ elif(example_choice==2):
     beam_nodes = np.array([[0,1]])
     beam_supp = np.array([[1, 1, 0, 1, 1, 1]])
     beam_prop = np.array([[1, 1, 1, 1,0]])
-
+    number_of_beams = 1
+    number_of_nodes = 2
+    
 elif(example_choice==3):
     print("This examle consists of tow beams, both are fixed on one side and are connected by a swillinging thingy")
     nodes = np.array([[0,0], [1,0], [2,0]])
@@ -59,7 +64,9 @@ elif(example_choice==3):
     beam_nodes = np.array([[0,1],[1,2]])
     beam_supp = np.array([[1, 1, 1, 1, 1, 0],[1, 1, 0, 1, 1, 1]])
     beam_prop = np.array([[1, 1, 1, 1,0],[1, 1, 1, 1,0]])
-
+    number_of_beams = 2
+    number_of_nodes = 3
+    
 elif(example_choice==4):
     print("This is one node suspended by 4 fixed beams")
     nodes = np.array([[0,0], [1,0], [-1,0],[0,1],[0,-1]])
@@ -73,6 +80,8 @@ elif(example_choice==4):
     beam_supp = np.array([[1, 1, 0, 1, 1, 1],[1, 1, 0, 1, 1, 1],[1, 1, 0, 1, 1, 1],[1, 1, 0, 1, 1, 1]])
     beam_prop = np.array([[1, 1, 1, 1,0],[1, 1, 1, 1,0],[1, 1, 1, 1, -0.5*np.pi],[1, 1, 1, 1, -0.5*np.pi]])
 
+    number_of_beams = 4
+    number_of_nodes = 5
 #this is the user interface
 elif(example_choice==5):
 
