@@ -21,7 +21,7 @@ def print_beams(beam_nodes, nodes):
 def print_force_ext(f_ext, number_of_nodes, nodes):#number_of_nodes not necesary, as it is a third of the size of f_ext
     for i in range(number_of_nodes):
         #if there is any force then act
-        if ((f_ext[i*3] =! 0) or (f_ext[i*3 + 1] =! 0)):
+        if ((f_ext[i*3] != 0) or (f_ext[i*3 + 1] != 0)):
         
             x = []
             y = []
