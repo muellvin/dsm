@@ -20,6 +20,7 @@ sol = s.solve_for_u_f(k_ff, f_ext_f)
 print("solution")
 print(s)
 
+
 reaction_forces = np.matmul(k_sf, sol)
 print("reaction forces")
 print(reaction_forces)

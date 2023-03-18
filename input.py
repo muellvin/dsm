@@ -115,7 +115,7 @@ elif(example_choice==5):
     node_disp = np.zeros(number_of_nodes)#this will be later used, and filled by the computer
 
     number_of_forces = int(input("how many forces do you really need?"))
-    for i in range(numebr_of_nodes):#create an empty force array
+    for i in range(number_of_nodes):#create an empty force array
         f_ext =np.append(f_ext, [0,0,0], axis=0)#the unused third 0 is the moment
     
     for i in range(number_of_forces):
