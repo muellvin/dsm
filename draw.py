@@ -14,15 +14,14 @@ def print_beams(beam_nodes, nodes):
 
         plt.plot(x, y, 'k')
 
-    plt.axis('scaled')
-    plt.show()
     
+
 #function that prints the gross cross section
 def print_force_ext(f_ext, number_of_nodes, nodes):#number_of_nodes not necesary, as it is a third of the size of f_ext
     for i in range(number_of_nodes):
         #if there is any force then act
         if ((f_ext[i*3] != 0) or (f_ext[i*3 + 1] != 0)):
-        
+
             x = []
             y = []
             #this is the node on wich the force acts
@@ -36,8 +35,7 @@ def print_force_ext(f_ext, number_of_nodes, nodes):#number_of_nodes not necesary
             #maybe add an other color?
             plt.plot(x, y, 'k')
 
-    plt.axis('scaled')
-    plt.show()
+
 
 
 def print_support_nodes(node_supp, nodes):
