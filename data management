@@ -1,6 +1,6 @@
 Data will be saved as numpy arrays (dimension = axis)
 
-NODES 
+NODES
 nodes:		nodes = 	[node number][x, y]
 displacements: 	node_dis = 	[node number][dx, dy, dphiz]
 
@@ -17,7 +17,7 @@ where b stands for bool, i,j are the two nodes, and n,v,m the corresponding forc
 
 
 FORCES
-ext forces:	f_ext = 	[node number][fx, fy, mz]
+ext forces:	f_ext = 	[fx, fy, mz, .... of all in order]
 (external forces acting directly on the nodes)
 int forces:	p_int =		[node number][fx, fy, mz]
 (reaction of the nodes to the beams due to weight and maybe internal forces on the beam)
@@ -28,11 +28,7 @@ SYSTEM
 The symmetrical stiffness matrix, the force and displacement vectors can be constructed
 stiffn. matrix:	k_sys =		kn1, kv1, km1, kn2, kv2, km2, ...
 displ. vector:	u_sys = 	...
-The total force vector can be computed by rotation the 
+The total force vector can be computed by rotation the
 force. vector:	f_sys = 	f_ext - p_int
-	
+
 Then the system can be solved for u_sys
-
-
-
-

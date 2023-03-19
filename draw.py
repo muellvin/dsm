@@ -14,7 +14,7 @@ def print_beams(beam_nodes, nodes):
 
         plt.plot(x, y, 'k')
 
-    
+
 
 #function that prints the gross cross section
 def print_force_ext(f_ext, number_of_nodes, nodes):#number_of_nodes not necesary, as it is a third of the size of f_ext
@@ -35,7 +35,10 @@ def print_force_ext(f_ext, number_of_nodes, nodes):#number_of_nodes not necesary
             #maybe add an other color?
             plt.plot(x, y, 'k')
 
-
+def print_nodes(nodes):
+    for i in range(len(nodes)):
+            plt.scatter(nodes[i][0], nodes[i][1],s=None, c='blue', marker='s')
+            plt.scatter(nodes[i][0], nodes[i][1],s=None, c='blue', marker='o')
 
 
 def print_support_nodes(node_supp, nodes):
