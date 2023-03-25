@@ -3,7 +3,7 @@ import numpy as np
 #PRE:   listed arguments
 #POST:  creates a stiffness matrix for each beam and returns them in an array
 def create_local_stiffness_matrixes(beam_nodes, beam_supp, beam_prop):
-    beam_k_loc = np.zeros((len(beam_nodes), 4, 4), dtype=float)
+    beam_k_loc = np.zeros((len(beam_nodes), 6, 6), dtype=float)
 
     for i in range(len(beam_nodes)):
         A = beam_prop[i][0]
@@ -11,76 +11,105 @@ def create_local_stiffness_matrixes(beam_nodes, beam_supp, beam_prop):
         I = beam_prop[i][2]
         L = beam_prop[i][3]
 
+        #beam clamped on both sides
+        if (beam_supp[i].all() == [1, 1, 1, 1, 1, 1]).all():
+            a = E*I/(L**3)*np.array([[A*L**2/I, 0, 0, -A*L**2/I, 0, 0], \
+                                                [0, 12, 6*L, 0, -12, 6*L], \
+                                                [0, 6*L,4*L**2, 0, -6*L, 2*L**2], \
+                                                [-A*L**2/I, 0, 0, A*L**2/I, 0, 0], \
+                                                [0, -12, -6*L, 0, 12, -6*L], \
+                                                [0, 6*L, 2*L**2, 0, -6*L, 4*L**2]], dtype=float)
         #beam pinned on both sides
-        assert((beam_supp[i].all() == [1, 1, 1, 1]).all(), "at least one beam is not supported through hinges")
-        a = E*I/(L**3)*np.array([[A*L**2/I, 0, -A*L**2/I, 0], \
-                                            [0, 0, 0, 0], \
-                                            [-A*L**2/I, 0, A*L**2/I, 0], \
-                                            [0, 0, 0, 0]], dtype=float)
+        elif (beam_supp[i] == [1, 1, 0, 1, 1, 0]).all():
+            a = E*I/(L**3)*np.array([[A*L**2/I, 0, 0, -A*L**2/I, 0, 0], \
+                                                [0, 0, 0, 0, 0, 0], \
+                                                [0, 0, 0, 0, 0, 0], \
+                                                [-A*L**2/I, 0, 0, A*L**2/I, 0, 0], \
+                                                [0, 0, 0, 0, 0, 0], \
+                                                [0, 0, 0, 0, 0, 0]], dtype=float)
+        #beam pinned on the left and clamped on the right
+        elif (beam_supp[i] == [1, 1, 0, 1, 1, 1]).all():
+            a = E*I/(L**3)*np.array([[A*L**2/I, 0, 0, -A*L**2/I, 0, 0], \
+                                                [0, 3, 0, 0, -3, 3*L], \
+                                                [0, 0, 0, 0, 0, 0], \
+                                                [-A*L**2/I, 0, 0, A*L**2/I, 0, 0], \
+                                                [0, -3, 0, 0, 3, -3*L], \
+                                                [0, 3*L, 0, 0, -3*L, 3*L**2]], dtype=float)
+        #beam clamped on the left and pinned on the right
+        elif (beam_supp[i] == [1, 1, 1, 1, 1, 0]).all():
+            a = E*I/(L**3)*np.array([[A*L**2/I, 0, 0, -A*L**2/I, 0, 0], \
+                                                [0, 3, 3*L, 0, -3, 0], \
+                                                [0, 3*L, 3*L**2, 0, -3*L, 0], \
+                                                [-A*L**2/I, 0, 0, A*L**2/I, 0, 0], \
+                                                [0, -3, -3*L, 0, 3, 0], \
+                                                [0, 0, 0, 0, 0, 0]], dtype=float)
 
+        else:
+            assert false, f"beam {i} false support"
         beam_k_loc[i] = np.array(a, dtype = float)
+    #print(beam_k_loc)
+    #print(beam_k_loc)
     return beam_k_loc
-
 
 #PRE:
 #POST:  rotates the stiffness matrix of each beam and returns the rotated stiffness matrices as an array
 def rotate_stiffness_matrices(beam_prop, beam_k_loc):
-    beam_k_glob = np.zeros((len(beam_prop), 4, 4))
-
+    beam_k_glob = np.zeros((len(beam_prop), 6, 6))
     for i in range(len(beam_prop)):
         phi = beam_prop[i][4]
-        R = np.array([[np.cos(phi), -np.sin(phi), 0, 0], \
-                      [np.sin(phi), np.cos(phi), 0, 0], \
-                      [0, 0, np.cos(phi), -np.sin(phi)], \
-                      [0, 0, np.sin(phi), np.cos(phi)]])
+        R = np.array([[np.cos(phi), -np.sin(phi), 0, 0, 0, 0], \
+                      [np.sin(phi), np.cos(phi), 0, 0, 0, 0], \
+                      [0, 0, 1, 0, 0, 0],\
+                      [0, 0, 0, np.cos(phi), -np.sin(phi), 0], \
+                      [0, 0, 0, np.sin(phi), np.cos(phi), 0], \
+                      [0, 0, 0, 0, 0, 1]])
         beam_k_glob[i] = np.matmul(np.transpose(R), np.matmul(beam_k_loc[i], R))
-
+    #print("beam_k_glob")
+    #print(beam_k_glob)
     return beam_k_glob
-
 
 #PRE:
 #POST:  creates the system stiffness matrix, all degrees of freedom are included
 #       it is two dimensional, symmetrical
 def build_k_sys(beam_nodes, beam_k_glob, node_supp):
-    k_sys = np.zeros((2*len(node_supp),2*len(node_supp)))
-
+    k_sys = np.zeros((3*len(node_supp),3*len(node_supp)))
     for beam in range(len(beam_nodes)):
         node_a = beam_nodes[beam][0]
         node_b = beam_nodes[beam][1]
-        #building the 4 2x2 blocks in the matrix
+        #building the 4 3x3 blocks in the matrix
         #beam_k_glob[beam] = [[aa, ab],
         #                     [ba, bb]]
         #block aa
-        for i in range(0, 2):
-            for j in range(0,2):
-                k_sys[2*node_a+i][2*node_a+j] += beam_k_glob[beam][i][j]
+        for i in range(0, 3):
+            for j in range(0,3):
+                k_sys[3*node_a+i][3*node_a+j] += beam_k_glob[beam][i][j]
         #block ab
-        for i in range(0, 2):
-            for j in range(0,2):
-                k_sys[2*node_a+i][2*node_b+j] += beam_k_glob[beam][i][2+j]
+        for i in range(0, 3):
+            for j in range(0,3):
+                k_sys[3*node_a+i][3*node_b+j] += beam_k_glob[beam][i][3+j]
         #block ba
-        for i in range(0, 2):
-            for j in range(0,2):
-                k_sys[2*node_b+i][2*node_a+j] += beam_k_glob[beam][2+i][j]
+        for i in range(0, 3):
+            for j in range(0,3):
+                k_sys[3*node_b+i][3*node_a+j] += beam_k_glob[beam][3+i][j]
         #block bb
-        for i in range(0, 2):
-            for j in range(0,2):
-                k_sys[2*node_b+i][2*node_b+j] += beam_k_glob[beam][2+i][2+j]
-
+        for i in range(0, 3):
+            for j in range(0,3):
+                k_sys[3*node_b+i][3*node_b+j] += beam_k_glob[beam][3+i][3+j]
+    print("k_sys")
+    print(k_sys)
     return k_sys
 
 #PRE:
 #POST:  returns a list of the degrees of freedoms which have no stiffness from any beam (not supported internally)
 #       the number corresponds to the place in the system stiffness matrix (the number of the degree of freedom)
-"""in case of a truss structure (only hinges) the only possibility for this to happen is, if a node is only connected through one beam"""
 def get_zero_degs(nodes, beam_nodes, beam_supp):
     non_zeros = np.array([],dtype=int)
     zeros = np.array([],dtype=int)
     node_number = 0
     #iterate over all node numbers
     for i in range(len(nodes)):
-        #iterate over all degrees of freedom of this node
-        for deg in range(0,2):
+        #iterate over all degrees of freedom if this node
+        for deg in range(0,3):
             zero = True
             beam_number = 0
             #iterate over all beams, check whether it is connected to that node
@@ -90,16 +119,16 @@ def get_zero_degs(nodes, beam_nodes, beam_supp):
                     if beam_supp[beam_number][deg] == 1:
                         zero = False
                 if beam[1] == i:
-                    if beam_supp[beam_number][2+deg] == 1:
+                    if beam_supp[beam_number][3+deg] == 1:
                         zero = False
                 beam_number+=1
             #if at leas one beam is connected to this degree of freedom then it is non zero
             if zero == False:
-                non_zeros = np.append(non_zeros, [int(2*node_number+deg)], axis=0)
+                non_zeros = np.append(non_zeros, [int(3*node_number+deg)], axis=0)
         node_number += 1
-    #iterate over all 2*nodes degrees of freedom, if it is a zero meaning if it is not
+    #iterate over all 3*nodes degrees of freedom, if it is a zero meaning if it is not
     #in non_zeros then we add it the the list
-    for i in range(2*len(nodes)):
+    for i in range(3*len(nodes)):
         zero = True
         for j in np.nditer(non_zeros):
             if i == j:
@@ -109,16 +138,15 @@ def get_zero_degs(nodes, beam_nodes, beam_supp):
 
     return zeros
 
-
 #PRE:
 #POST:  returns a list of the degrees of freedoms which have no external support (not supported externally)
 #       the number corresponds to the place in the system stiffness matrix (the number of the degree of freedom)
 def get_free_degs(node_supp):
     frees = np.array([], dtype=int)
     for i in range(len(node_supp)):
-        for j in range(0,2):
+        for j in range(0,3):
             if node_supp[i][j] == 0:
-                frees = np.append(frees, [int(2*i+j)], axis=0)
+                frees = np.append(frees, [int(3*i+j)], axis=0)
     print("free degrees")
     print(frees)
     return frees
@@ -129,9 +157,9 @@ def get_free_degs(node_supp):
 def get_fixed_degs(node_supp):
     fixed = np.array([], dtype = int)
     for i in range(len(node_supp)):
-        for j in range(0,2):
+        for j in range(0,3):
             if node_supp[i][j] == 1:
-                fixed = np.append(fixed, [int(2*i+j)], axis=0)
+                fixed = np.append(fixed, [int(3*i+j)], axis=0)
     print("fixed degrees")
     print(fixed)
     return fixed

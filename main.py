@@ -2,7 +2,7 @@ import input
 import draw
 import stiffness as s
 import numpy as np
-
+import matplotlib.pyplot as plt
 print(input.beam_nodes)
 #draw.print_support(input.node_supp, input.nodes)
 #draw.print_beams(input.beam_nodes, input.nodes)
@@ -26,10 +26,13 @@ reaction_forces = np.matmul(k_sf, sol)
 print("reaction forces")
 print(reaction_forces)
 
+#create the figure
+fig = plt.figure()
+ax = fig.add_subplot(1,1,1)
 #draw.print_support_beams(input.beam_supp, input.beam_nodes, input.number_of_beams, input.nodes)
-draw.print_force_ext(input.f_ext, input.number_of_nodes, input.nodes)
-#draw.print_support_nodes(input.node_supp, input.nodes)
-draw.print_beams(input.beam_nodes, input.nodes)
+#draw.print_force_ext(ax, input.f_ext, input.number_of_nodes, input.nodes)
+draw.print_support_nodes(ax, input.node_supp, input.nodes)
+draw.print_beams(ax, input.beam_nodes, input.nodes)
 
-draw.plt.axis('scaled')
-draw.plt.show()
+plt.axis('scaled')
+plt.show()
