@@ -10,13 +10,14 @@ def create_local_stiffness_matrixes(beam_nodes, beam_supp, beam_prop):
         E = beam_prop[i][1]
         I = beam_prop[i][2]
         L = beam_prop[i][3]
+        v = E*A/L
 
         #beam pinned on both sides
         assert((beam_supp[i].all() == [1, 1, 1, 1]).all(), "at least one beam is not supported through hinges")
-        a = E*I/(L**3)*np.array([[A*L**2/I, 0, -A*L**2/I, 0], \
-                                            [0, 0, 0, 0], \
-                                            [-A*L**2/I, 0, A*L**2/I, 0], \
-                                            [0, 0, 0, 0]], dtype=float)
+        a = np.array([[v, 0, -v, 0], \
+                      [0, 0, 0, 0], \
+                      [-v, 0, v, 0], \
+                      [0, 0, 0, 0]], dtype=float)
 
         beam_k_loc[i] = np.array(a, dtype = float)
     return beam_k_loc
@@ -29,6 +30,7 @@ def rotate_stiffness_matrices(beam_prop, beam_k_loc):
 
     for i in range(len(beam_prop)):
         phi = beam_prop[i][4]
+        #print(f"bream {i} has angle {phi}")
         R = np.array([[np.cos(phi), -np.sin(phi), 0, 0], \
                       [np.sin(phi), np.cos(phi), 0, 0], \
                       [0, 0, np.cos(phi), -np.sin(phi)], \
@@ -101,7 +103,7 @@ def get_zero_degs(nodes, beam_nodes, beam_supp):
     #in non_zeros then we add it the the list
     for i in range(2*len(nodes)):
         zero = True
-        for j in np.nditer(non_zeros):
+        for j in non_zeros:
             if i == j:
                 zero = False
         if zero:
@@ -154,18 +156,18 @@ def get_k_ff(k_sys, node_supp, nodes, beam_nodes, beam_supp):
 
     #iterate over all free degrees of freedom
     counter_d = 0
-    for d in np.nditer(frees):
+    for d in frees:
         #check whether d is a zero degree of freedom
         d_zero = False
-        for i in np.nditer(zeros):
+        for i in zeros:
             if d == i:
                 d_zero = True
         #if it is also a non zero
         if d_zero == False:
             counter_o = 0
-            for o in np.nditer(frees):
+            for o in frees:
                 o_zero = False
-                for i in np.nditer(zeros):
+                for i in zeros:
                     if o == i:
                         o_zero = True
                 if o_zero == False:
@@ -200,12 +202,12 @@ def get_k_sf(k_sys, node_supp, nodes, beam_nodes, beam_supp):
     k_sf = np.zeros((len(fixed), size))
 
     counter_d = 0
-    for d in np.nditer(fixed):
+    for d in fixed:
         counter_o = 0
-        for o in np.nditer(frees):
+        for o in frees:
             #check whether o is a zero degree of freedom
             o_zero = False
-            for i in np.nditer(zeros):
+            for i in zeros:
                 if o == i:
                     o_zero = True
             #if it is also a non zero
@@ -232,10 +234,10 @@ def get_f_ext_f(f_ext, node_supp, nodes, beam_nodes, beam_supp):
     f_ext_f = np.zeros((size))
 
     counter = 0
-    for i in np.nditer(frees):
+    for i in frees:
         #check whether o is a zero degree of freedom
         i_zero = False
-        for j in np.nditer(zeros):
+        for j in zeros:
             if i == j:
                 i_zero = True
         #if it is also a non zero

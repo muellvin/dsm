@@ -12,19 +12,27 @@ example_choice = int(input("Woud you like to use a standart example?: 0 is a use
 if(example_choice==0):
     print("This is the basic example, one beam fixed on both ends")
     nodes = np.array([[0,0], [1,0], [2,0], [1,1]])
-    node_supp = np.array([[1,1], [0,0], [1,1], [0,0]])
+    node_supp = np.array([[1,1], [0,0], [0,0], [0,0]])
+    print(len(nodes))
 
     node_disp = np.array([0,0, 0,0, 0,0, 0,0])
     f_ext = np.array([0,0, 0,0, 0,0, 0,-1])
 
 
     beam_nodes = np.array([[0,1], [1,2], [0,3], [1,3], [2,3]])
-    beam_supp = np.ones((beam_nodes.shape[0],2))
-    print("beam_supp", beam_supp)
+    beam_supp = np.ones((beam_nodes.shape[0],4))
     beam_prop = np.zeros((beam_nodes.shape[0], 5))
-    for beam in beam_prop:
-        beam = [1, 1, 1, 1, 0]
-
+    for i in range(len(beam_prop)):
+        node_a = nodes[beam_nodes[i][0]]
+        node_b = nodes[beam_nodes[i][1]]
+        if node_a[0] == node_b[0]:
+            if node_a[1] < node_b[1]:
+                angle = np.pi/2
+            else:
+                angle = -np.pi/2
+        else:
+            angle = np.arctan((node_b[1]-node_a[1])/(node_b[0]-node_a[0]))
+        beam_prop[i] = [1, 1, 1, 1, angle]
 
 #this is the user interface
 elif(example_choice==2):
