@@ -49,3 +49,14 @@ def print_force_ext(ax, nodes, f_ext):#number_of_nodes not necesary, as it is a 
                 y.append(nodes[i][1]-0.5*fx)
 
             ax.plot(x, y, c='red')
+
+def draw_structure(nodes, node_supp, beam_nodes, f_ext):
+    fig = plt.figure()
+    ax = fig.add_subplot(1,1,1)
+    print_supp(ax, nodes, node_supp)
+    print_nodes(ax,nodes)
+    print_beams(ax, beam_nodes, nodes)
+    print_force_ext(ax, nodes, f_ext)
+
+    plt.axis('scaled')
+    plt.show()

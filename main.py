@@ -34,12 +34,4 @@ else:
 
 
 #create the figure
-fig = plt.figure()
-ax = fig.add_subplot(1,1,1)
-draw.print_supp(ax, input.nodes, input.node_supp)
-draw.print_nodes(ax,input.nodes)
-draw.print_beams(ax, input.beam_nodes, input.nodes)
-draw.print_force_ext(ax, input.nodes, input.f_ext)
-
-plt.axis('scaled')
-plt.show()
+draw.draw_structure(input.nodes, input.node_supp, input.beam_nodes, input.f_ext)

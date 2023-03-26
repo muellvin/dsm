@@ -34,6 +34,7 @@ if(example_choice==0):
 
 
 if (example_choice==1):
+    print("to be connected, just run generate_structure.py")
 
 #this is the user interface
 elif(example_choice==2):
