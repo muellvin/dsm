@@ -30,20 +30,22 @@ def print_supp(ax, nodes, node_supp):
 
 
 #function that prints the gross cross section
-def print_force_ext(ax, f_ext, number_of_nodes, nodes):#number_of_nodes not necesary, as it is a third of the size of f_ext
-    for i in range(number_of_nodes):
+def print_force_ext(ax, nodes, f_ext):#number_of_nodes not necesary, as it is a third of the size of f_ext
+    for i in range(len(nodes)):
+        fx = f_ext[i*2]
+        fy = f_ext[i*2 + 1]
         #if there is any force then act
-        if ((f_ext[i*3] != 0) or (f_ext[i*3 + 1] != 0)):
-
+        if ((fx != 0) or (fy !=0)):
             x = []
             y = []
-            #this is the node on wich the force acts
             x.append(nodes[i][0])
             y.append(nodes[i][1])
 
-            #this is the force
-            x.append(f_ext[i*3 ])
-            y.append(f_ext[i*3 +1])
+            if fx != 0:
+                x.append(nodes[i][0]-0.5*fx)
+                y.append(nodes[i][1])
+            else:
+                x.append(nodes[i][0])
+                y.append(nodes[i][1]-0.5*fx)
 
-            #maybe add an other color?
-            ax.plot(x, y, 'k')
+            ax.plot(x, y, c='red')

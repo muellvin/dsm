@@ -13,7 +13,6 @@ if(example_choice==0):
     print("This is the basic example, one beam fixed on both ends")
     nodes = np.array([[0,0], [1,0], [2,0], [1,1]])
     node_supp = np.array([[1,1], [0,0], [0,0], [0,0]])
-    print(len(nodes))
 
     node_disp = np.array([0,0, 0,0, 0,0, 0,0])
     f_ext = np.array([0,0, 0,0, 0,0, 0,-1])
