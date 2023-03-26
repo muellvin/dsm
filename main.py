@@ -18,7 +18,11 @@ k_ff = s.get_k_ff(k_sys, input.node_supp, input.nodes, input.beam_nodes, input.b
 k_sf = s.get_k_sf(k_sys, input.node_supp, input.nodes, input.beam_nodes, input.beam_supp)
 f_ext_f = s.get_f_ext_f(input.f_ext, input.node_supp, input.nodes, input.beam_nodes, input.beam_supp)
 
-if np.linalg.det(k_ff) == 0:
+det = np.linalg.det(k_ff)
+print("determinant of k_ff")
+print(det)
+#the determinant should be non zero; the transformation should be reversable
+if abs(det) < 1e-10:
     print("structure cannot hold")
 else:
     sol = s.solve_for_u_f(k_ff, f_ext_f)
