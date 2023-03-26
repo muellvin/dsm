@@ -5,12 +5,11 @@ import numpy as np
 #will have been intiialisend and filled with values
 #eighter by and hard coded example or by a user input
 
-example_choice = int(input("Woud you like to use a standart example?: 0 is a useful examle, 5 is free user input"))
+example_choice = int(input("Choose: 0 example, 1 randomly generated, 2 user input"))
 
 
 #the first 4 are hard coded examples
 if(example_choice==0):
-    print("This is the basic example, one beam fixed on both ends")
     nodes = np.array([[0,0], [1,0], [2,0], [1,1]])
     node_supp = np.array([[1,1], [0,0], [0,1], [0,0]])
 
@@ -32,6 +31,9 @@ if(example_choice==0):
         else:
             angle = np.arctan((node_b[1]-node_a[1])/(node_b[0]-node_a[0]))
         beam_prop[i] = [1, 1, 1, 1, angle]
+
+
+if (example_choice==1):
 
 #this is the user interface
 elif(example_choice==2):

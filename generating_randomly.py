@@ -21,8 +21,7 @@ y_min = np.min(given_nodes[:,1])
 x_max = np.max(given_nodes[:,0])
 y_max = np.max(given_nodes[:,1])
 
-n_internal_nodes = 1
-print(n_internal_nodes)
+n_internal_nodes = np.random.randint(1,4)
 n_nodes = n_given_nodes + n_internal_nodes
 
 nodes = np.zeros((n_nodes, 2))
@@ -31,7 +30,6 @@ for i in range(len(given_nodes[:,0])):
 
 node_disp = np.zeros(3*n_nodes)
 f_ext = np.zeros(3*n_nodes)
-print(f_ext)
 
 for i in range(len(given_f_ext)):
     f_ext[i] = given_f_ext[i]
@@ -43,44 +41,55 @@ for i in range(n_internal_nodes):
     y = np.random.randint(y_min, y_max)
     nodes[n_given_nodes+i] = np.array([x, y])
 
-draw.print_nodes(nodes)
-#print(nodes)
+
 
 #creating the beams
 tri = Delaunay(nodes)
 #print(tri.simplices)
 
-beam_nodes = np.zeros((len(nodes[tri.simplices])*3,2,2))
+#creating the beams from the triangles
+beam_nodes = np.zeros((len(tri.simplices)*3,2))
 beam_counter = 0
-for triangle in nodes[tri.simplices]:
-    beam0 = np.zeros((2,2))
+for triangle in tri.simplices:
+    beam0 = np.zeros(2)
     beam0[0] = triangle[0]
     beam0[1] = triangle[1]
-    if not np.all(np.isin(beam0, beam_nodes)) and not np.all(np.isin(beam0[[1,0]], beam_nodes)):
-        beam_nodes[beam_counter] = beam0
-        beam_counter += 1
-    beam1 = np.zeros((2,2))
+    beam_nodes[beam_counter] = beam0
+    beam_counter += 1
+    beam1 = np.zeros(2)
     beam1[0] = triangle[1]
     beam1[1] = triangle[2]
-    print(beam1)
-    if not np.all(np.isin(beam1, beam_nodes)) and not np.all(np.isin(beam1[[1,0]], beam_nodes)):
-        beam_nodes[beam_counter] = beam1
-        beam_counter += 1
-    beam2 = np.zeros((2,2))
+    beam_nodes[beam_counter] = beam1
+    beam_counter += 1
+    beam2 = np.zeros(2)
     beam2[0] = triangle[0]
     beam2[1] = triangle[2]
-    if not np.all(np.isin(beam2, beam_nodes)) and not np.all(np.isin(beam2[[1,0]], beam_nodes)):
-        beam_nodes[beam_counter] = beam2
-        beam_counter += 1
-
-print("beamcounter", beam_counter)
-print("beams")
-print(beam_nodes)
+    beam_nodes[beam_counter] = beam2
+    beam_counter += 1
 
 
+#removing doubles
+index = np.array([],dtype = int)
+length = len(beam_nodes)
+for i in range(length):
+    a = beam_nodes[i][0]
+    b = beam_nodes[i][1]
+    dublicates = 0
+    for j in range(i+1, length):
+        if ((a == beam_nodes[j][0] and b == beam_nodes[j][1]) or (b == beam_nodes[j][0] and a == beam_nodes[j][1])):
+            if dublicates < 1:
+                index = np.append(index, [j], axis=0)
+            dublicates += 1
+
+beam_nodes = np.delete(beam_nodes, index, axis = 0)
 
 
-plt.triplot(nodes[:,0], nodes[:,1], tri.simplices)
-plt.plot(nodes[:,0], nodes[:,1], 'o')
-draw.plt.axis('scaled')
-draw.plt.show()
+
+
+fig = plt.figure()
+ax = fig.add_subplot(1,1,1)
+
+ax.triplot(nodes[:,0], nodes[:,1], tri.simplices)
+ax.plot(nodes[:,0], nodes[:,1], 'o')
+plt.axis('scaled')
+plt.show()
