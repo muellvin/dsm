@@ -1,6 +1,8 @@
 #imports
 import matplotlib.pyplot as plt
 import numpy as np
+np.set_printoptions(precision=2)
+np.set_printoptions(suppress=True)
 
 #adds all the nodes to the ax object as scatter points
 def print_nodes(ax, nodes):
@@ -19,7 +21,7 @@ def print_beams(ax, beam_nodes, nodes, load):
         x.append(nodes[beam[1]][0])
         y.append(nodes[beam[1]][1])
 
-        c = int(load[index]*30)
+        c = min(int(load[index]/(1/30)), 29)
         ax.plot(x, y, color = colors[c])
         index += 1
 
@@ -45,9 +47,14 @@ def print_force_ext(ax, nodes, f_ext):#number_of_nodes not necesary, as it is a 
             y = []
             x.append(nodes[i][0])
             y.append(nodes[i][1])
-
-            x.append(nodes[i][0]-0.2*fx)
-            y.append(nodes[i][1]-0.2*fy)
+            u = 0
+            v = 0
+            if (fx != 0):
+                u = 0.5
+            if (fy != 0):
+                v = 0.5
+            x.append(nodes[i][0]-u)
+            y.append(nodes[i][1]-v)
 
             ax.plot(x, y, c='red')
 

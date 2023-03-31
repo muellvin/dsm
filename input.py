@@ -1,9 +1,11 @@
 import numpy as np
+import input_helper as ih
 
 #run this script in the begining of the programm
 #afterwards the arrays nodes, node_supp, node_disp, f_ext, beam_nodes, beam_supp, beam_prop
 #will have been intiialisend and filled with values
 #eighter by and hard coded example or by a user input
+
 
 example_choice = int(input("Choose: 0 example, 1 randomly generated, 2 user input"))
 
@@ -13,30 +15,19 @@ if(example_choice==0):
     nodes = np.array([[0,0], [1,0], [2,0], [2,1]])
     node_supp = np.array([[1,1], [0,0], [0,1], [0,0]])
 
-    f_ext = np.array([0,0, 0,0, 0,0, 2,0])
+    # 1000 N
+    f_ext = np.array([0,0, 0,0, 0,0, 300000,0])
 
 
     beam_nodes = np.array([[0,1], [1,2], [0,3], [1,3], [2,3]])
     beam_supp = np.ones((beam_nodes.shape[0],4))
-    beam_prop = np.zeros((beam_nodes.shape[0], 5))
-    for i in range(len(beam_prop)):
-        node_a = nodes[beam_nodes[i][0]]
-        node_b = nodes[beam_nodes[i][1]]
-        if node_a[0] == node_b[0]:
-            if node_a[1] < node_b[1]:
-                angle = np.pi/2
-            else:
-                angle = -np.pi/2
-        else:
-            angle = np.arctan((node_b[1]-node_a[1])/(node_b[0]-node_a[0]))
-        length = np.linalg.norm(nodes[node_b]-nodes[node_a])
-        beam_prop[i] = [1, 20, 1, length, angle]
+    beam_prop = ih.get_even_beam_prop(nodes, beam_nodes)
 
 
 if (example_choice==1):
     print("to be connected, just run generate_structure.py")
 
-#this is the user interface
+    #this is the user interface
 elif(example_choice==2):
 
     #make a declaration of the later used things, it should all be overwritten and appended to

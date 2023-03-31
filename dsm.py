@@ -1,14 +1,15 @@
 import numpy as np
 
+
 #PRE:   listed arguments
 #POST:  creates a stiffness matrix for each beam and returns them in an array
 def create_local_stiffness_matrixes(beam_nodes, beam_supp, beam_prop):
     beam_k_loc = np.zeros((len(beam_nodes), 4, 4), dtype=float)
-
     for i in range(len(beam_nodes)):
         A = beam_prop[i][0]
         E = beam_prop[i][1]
         L = beam_prop[i][3]
+        # 1'000 N/mm^2 * mm² / 1'000 mm = N/mm
         v = E*A/L
 
         #beam pinned on both sides
@@ -162,6 +163,7 @@ def get_f_ext_f(f_ext, node_supp, nodes, beam_nodes, beam_supp):
 
 
 def solve_for_u_f(k_ff, f_ext_f):
+    #mm/N * 1000 N = m
     return np.matmul(np.linalg.inv(k_ff), f_ext_f)
 
 
@@ -183,13 +185,16 @@ def inner_forces(nodes_new, beam_nodes, beam_prop):
 
         A = beam_prop[i][0]
         E = beam_prop[i][1]
+        f_y = beam_prop[i][2]
         L = beam_prop[i][3]
 
         l_new = np.linalg.norm(nodes_new[node_b]-nodes_new[node_a])
         e = (l_new/L-1)
 
+        #mm² * 1000 N/mm² = N
         force = A*E*e
-        f_y = 3
+
+        # N /(mm² * N/mm²)
         q = force/(A*f_y)
 
         load[i] = abs(q)
@@ -214,7 +219,7 @@ def compute_deformation(nodes, node_supp, f_ext, beam_nodes, beam_supp, beam_pro
     #the determinant should be non zero; the transformation should be reversable
     if abs(det) < 1e-10:
         print("structure cannot hold")
-        return false
+        return False
     else:
         sol = solve_for_u_f(k_ff, f_ext_f)
         print("solution")
@@ -225,6 +230,8 @@ def compute_deformation(nodes, node_supp, f_ext, beam_nodes, beam_supp, beam_pro
 
         #displacements of each node
         u_glob = get_u_glob(nodes, sol, node_supp)
+        print("u_glob")
+        print(u_glob)
 
         #deformed nodes
         nodes_new = np.zeros((len(nodes),2), dtype = float)

@@ -98,4 +98,4 @@ def generate_delaunay(given_nodes, given_node_supp, given_f_ext, n_min, n_max):
 #    plt.axis('scaled')
 #    plt.show()
 
-    return nodes, node_supp, node_disp, f_ext, beam_nodes,
+    return nodes, node_supp, node_disp, f_ext, beam_nodes
