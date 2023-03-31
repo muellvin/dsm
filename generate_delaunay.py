@@ -14,7 +14,7 @@ import draw
 #given_f_ext = np.array([0,0,0, 0,0,0, 0, -1, 0])
 
 def generate_delaunay(given_nodes, given_node_supp, given_f_ext, n_min, n_max):
-    n_given_nodes = 3
+    n_given_nodes = len(given_nodes)
 
     #envelope of possible node placements
     x_min = np.min(given_nodes[:,0])

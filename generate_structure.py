@@ -5,9 +5,9 @@ import input_helper as ih
 import dsm
 import matplotlib.pyplot as plt
 
-given_nodes = np.array([[0,0], [10,0], [5,5]])
-given_node_supp = np.array([[1,1],[1,1],[0,0]])
-given_f_ext = np.array([0,0,0, 0,0,-300000])
+given_nodes = np.array([[0,0], [10,0], [5,5], [14,6]])
+given_node_supp = np.array([[1,1],[1,1],[0,0], [0,0]])
+given_f_ext = np.array([0,0,0, 0,0,-300000, 2000000, 0])
 n_min = 4
 n_max = 5
 
