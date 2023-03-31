@@ -8,7 +8,9 @@ def print_nodes(ax, nodes):
 
 
 #function that prints the gross cross section
-def print_beams(ax, beam_nodes, nodes):
+def print_beams(ax, beam_nodes, nodes, load):
+    colors = plt.cm.jet(np.linspace(0,1,30))
+    index = 0
     for beam in beam_nodes:
         x = []
         y = []
@@ -17,7 +19,9 @@ def print_beams(ax, beam_nodes, nodes):
         x.append(nodes[beam[1]][0])
         y.append(nodes[beam[1]][1])
 
-        ax.plot(x, y, 'b')
+        c = int(load[index]*30)
+        ax.plot(x, y, color = colors[c])
+        index += 1
 
 def print_supp(ax, nodes, node_supp):
     for i in range(len(nodes)):
@@ -34,6 +38,7 @@ def print_force_ext(ax, nodes, f_ext):#number_of_nodes not necesary, as it is a 
     for i in range(len(nodes)):
         fx = f_ext[i*2]
         fy = f_ext[i*2 + 1]
+
         #if there is any force then act
         if ((fx != 0) or (fy !=0)):
             x = []
@@ -41,21 +46,18 @@ def print_force_ext(ax, nodes, f_ext):#number_of_nodes not necesary, as it is a 
             x.append(nodes[i][0])
             y.append(nodes[i][1])
 
-            if fx != 0:
-                x.append(nodes[i][0]-0.5*fx)
-                y.append(nodes[i][1])
-            else:
-                x.append(nodes[i][0])
-                y.append(nodes[i][1]-0.5*fx)
+            x.append(nodes[i][0]-0.2*fx)
+            y.append(nodes[i][1]-0.2*fy)
 
             ax.plot(x, y, c='red')
 
-def draw_structure(nodes, node_supp, beam_nodes, f_ext):
+def draw_structure(nodes, load, node_supp, beam_nodes, f_ext):
+    print(load)
     fig = plt.figure()
     ax = fig.add_subplot(1,1,1)
     print_supp(ax, nodes, node_supp)
     print_nodes(ax,nodes)
-    print_beams(ax, beam_nodes, nodes)
+    print_beams(ax, beam_nodes, nodes, load)
     print_force_ext(ax, nodes, f_ext)
 
     plt.axis('scaled')

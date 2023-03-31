@@ -10,11 +10,10 @@ example_choice = int(input("Choose: 0 example, 1 randomly generated, 2 user inpu
 
 #the first 4 are hard coded examples
 if(example_choice==0):
-    nodes = np.array([[0,0], [1,0], [2,0], [1,1]])
+    nodes = np.array([[0,0], [1,0], [2,0], [2,1]])
     node_supp = np.array([[1,1], [0,0], [0,1], [0,0]])
 
-    node_disp = np.array([0,0, 0,0, 0,0, 0,0])
-    f_ext = np.array([0,0, 0,0, 0,0, 0,-1])
+    f_ext = np.array([0,0, 0,0, 0,0, 2,0])
 
 
     beam_nodes = np.array([[0,1], [1,2], [0,3], [1,3], [2,3]])
@@ -30,7 +29,8 @@ if(example_choice==0):
                 angle = -np.pi/2
         else:
             angle = np.arctan((node_b[1]-node_a[1])/(node_b[0]-node_a[0]))
-        beam_prop[i] = [1, 1, 1, 1, angle]
+        length = np.linalg.norm(nodes[node_b]-nodes[node_a])
+        beam_prop[i] = [1, 20, 1, length, angle]
 
 
 if (example_choice==1):

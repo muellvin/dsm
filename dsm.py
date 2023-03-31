@@ -8,7 +8,6 @@ def create_local_stiffness_matrixes(beam_nodes, beam_supp, beam_prop):
     for i in range(len(beam_nodes)):
         A = beam_prop[i][0]
         E = beam_prop[i][1]
-        I = beam_prop[i][2]
         L = beam_prop[i][3]
         v = E*A/L
 
@@ -164,3 +163,74 @@ def get_f_ext_f(f_ext, node_supp, nodes, beam_nodes, beam_supp):
 
 def solve_for_u_f(k_ff, f_ext_f):
     return np.matmul(np.linalg.inv(k_ff), f_ext_f)
+
+
+def get_u_glob(nodes, sol, node_supp):
+    frees = get_free_degs(node_supp)
+    node_disp = np.zeros(len(nodes)*2)
+
+    count = 0
+    for i in frees:
+        node_disp[i] = sol[count]
+        count += 1
+    return node_disp
+
+def inner_forces(nodes_new, beam_nodes, beam_prop):
+    load = np.zeros(len(beam_nodes),dtype=float)
+    for i in range(len(beam_nodes)):
+        node_a = beam_nodes[i][0]
+        node_b = beam_nodes[i][1]
+
+        A = beam_prop[i][0]
+        E = beam_prop[i][1]
+        L = beam_prop[i][3]
+
+        l_new = np.linalg.norm(nodes_new[node_b]-nodes_new[node_a])
+        e = (l_new/L-1)
+
+        force = A*E*e
+        f_y = 3
+        q = force/(A*f_y)
+
+        load[i] = abs(q)
+
+    return load
+
+
+def compute_deformation(nodes, node_supp, f_ext, beam_nodes, beam_supp, beam_prop):
+    beam_k_loc = create_local_stiffness_matrixes(beam_nodes, beam_supp, beam_prop)
+    beam_k_glob = rotate_stiffness_matrices(beam_prop, beam_k_loc)
+    k_sys = build_k_sys(beam_nodes, beam_k_glob, node_supp)
+    print("k_sys")
+    print(k_sys)
+
+    k_ff = get_k_ff(k_sys, node_supp, nodes, beam_nodes, beam_supp)
+    k_sf = get_k_sf(k_sys, node_supp, nodes, beam_nodes, beam_supp)
+    f_ext_f = get_f_ext_f(f_ext, node_supp, nodes, beam_nodes, beam_supp)
+
+    det = np.linalg.det(k_ff)
+    print("determinant of k_ff")
+    print(det)
+    #the determinant should be non zero; the transformation should be reversable
+    if abs(det) < 1e-10:
+        print("structure cannot hold")
+        return false
+    else:
+        sol = solve_for_u_f(k_ff, f_ext_f)
+        print("solution")
+        print(sol)
+        reaction_forces = np.matmul(k_sf, sol)
+        print("reaction forces")
+        print(reaction_forces)
+
+        #displacements of each node
+        u_glob = get_u_glob(nodes, sol, node_supp)
+
+        #deformed nodes
+        nodes_new = np.zeros((len(nodes),2), dtype = float)
+        for i in range(len(nodes)):
+            for j in range(2):
+                nodes_new[i][j] = nodes[i][j]+ u_glob[2*i+j]
+
+        load = inner_forces(nodes_new, beam_nodes, beam_prop)
+        return nodes_new, load
