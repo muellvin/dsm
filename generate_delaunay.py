@@ -25,7 +25,7 @@ def generate_delaunay(given_nodes, given_node_supp, given_f_ext, n_min, n_max):
     n_internal_nodes = np.random.randint(n_min, n_max)
     n_nodes = n_given_nodes + n_internal_nodes
 
-    nodes = np.zeros((n_nodes, 2))
+    nodes = np.zeros((n_nodes, 2), dtype=int)
     for i in range(len(given_nodes[:,0])):
         nodes[i] = given_nodes[i]
 

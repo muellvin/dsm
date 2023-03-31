@@ -1,6 +1,7 @@
 import numpy as np
 import generate_delaunay as gd
 import draw
+import dsm
 import matplotlib.pyplot as plt
 
 given_nodes = np.array([[0,0], [10,0], [5,5]])
@@ -11,7 +12,8 @@ n_max = 5
 
 nodes, node_supp, node_disp, f_ext, beam_nodes = gd.generate_delaunay(given_nodes, given_node_supp, given_f_ext, n_min, n_max)
 
+load = np.zeros(len(beam_nodes))
 
 
 #create the figure
-draw.draw_structure(nodes, node_supp, beam_nodes, f_ext)
+draw.draw_structure(nodes, load, node_supp, beam_nodes, f_ext)
