@@ -1,0 +1,3 @@
+# frontend-requirements.txt
+
+paper@^2.0.0
