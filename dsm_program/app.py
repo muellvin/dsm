@@ -1,10 +1,15 @@
-from flask import Flask
+from flask import Flask, render_template, request
+
 app = Flask(__name__)
 
 @app.route('/')
-def hello_geek():
-    return '<h1>Hello from Flask & Docker</h2>'
+def index():
+    return render_template('index.html')
 
+@app.route('/process', methods=['POST'])
+def process():
+    variable = request.form['variable']
+    return f"The variable you entered is: {variable}"
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
