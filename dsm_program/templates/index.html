@@ -1,29 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Flask Image and Variable</title>
-    <script src="{{ url_for('static', filename='paper-full.js') }}"></script>
-
+    <script src="../static/paper-full.js"></script>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
 </head>
 <body>
-    <img src="/static/image.jpg" alt="Image">
-    <form action="/process" method="POST">
-        <label for="variable">Enter a variable:</label>
-        <input type="text" id="variable" name="variable">
-        <input type="submit" value="Submit">
-    </form>
 
-    <canvas id="myCanvas" resize></canvas>
+    <canvas id="paperCanvas" width="800" height="600"></canvas>
+    <script src="../static/script.js"></script>
 
-    <script>
-        // Paper.js code
-        paper.install(window);
-        paper.setup('myCanvas');
-
-        var circle = new Path.Circle(new Point(100, 100), 50);
-        circle.fillColor = 'red';
-
-        paper.view.draw();
-    </script>
 </body>
 </html>
